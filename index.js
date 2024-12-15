@@ -1,71 +1,85 @@
-require('dotenv').config(); // Load environment variables
-
 const express = require("express");
+const ejs = require("ejs");
+const fs = require("fs");
 const nodemailer = require("nodemailer");
-const cors = require("cors");
-const twilio = require("twilio");
+const cors = require("cors"); // Import CORS
+require("dotenv").config();
 
 const app = express();
-app.use(cors());
+
+// Middleware
 app.use(express.json());
+app.use(cors()); // Enable CORS for all routes
 
-const accountSid = process.env.ACCOUNT_SID;
-const authToken = process.env.AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
+// Load email templates
+const internalTemplate = fs.readFileSync("internalEmailTemplate.ejs", "utf-8"); // For internal email
+const welcomeTemplate = fs.readFileSync("welcomeEmailTemplate.html", "utf-8"); // For welcome email
 
-// Send WhatsApp message using Twilio
-const sendTwilioMessage = async (phoneNumber, message) => {
-    await client.messages.create({
-        body: message,
-        from: 'whatsapp:' + process.env.PHONE_NUMBER, // WhatsApp-enabled Twilio number
-        to: 'whatsapp:' + phoneNumber // Recipient's WhatsApp number
-    });
-};
+// Create transporter for internal email using the first email
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: process.env.GMAIL_USER, // Your internal email
+        pass: process.env.GMAIL_PASS, // Your internal email app password
+    },
+});
 
+// Create transporter for sending welcome email using the second email account
+const welcomeTransporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: process.env.EMAIL, 
+        pass: process.env.EMAIL_PASS, 
+    },
+});
+
+// Endpoint to handle emails
 app.post("/send-email", async (req, res) => {
     const { fullname, phone, email, institution, message } = req.body;
 
-    const transporter = nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_PASS,
-        },
+    // Compile Internal Email with EJS
+    const internalEmailHtml = ejs.render(internalTemplate, {
+        fullname,
+        phone,
+        email,
+        institution,
+        message,
     });
 
-    const mailOptions = {
+    // Mail options for internal email
+    const internalMailOptions = {
         from: email,
-        to: process.env.EMAIL,
-        subject: `Mail from ${fullname}`,
-        text: `
-            My name is ${fullname}.
-            My phone number is ${phone}.
-            My email address is ${email}.
-            My institution: ${institution || "none"}.
-            Here is my message: ${message}.
-        `,
+        to: process.env.EMAIL, // Internal email address
+        subject: `Message from ${fullname}`,
+        html: internalEmailHtml,
     };
 
-    transporter.sendMail(mailOptions, async (error, info) => {
-        if (error) {
-            console.log(error);
-            res.status(500).send("Error sending email");
-        } else {
-            console.log("Email sent: " + info.response);
+    // Mail options for welcome email
+    const welcomeMailOptions = {
+        from: process.env.WELCOME_EMAIL, // Welcome email account
+        to: email, // User's email
+        subject: "Thanks for Reaching Out to Edvatiq!",
+        html: welcomeTemplate.replace("FULLNAME", fullname),
+    };
 
-            const messageBody = `My name is ${fullname}. My phone number is ${phone}. My email address is ${email}. Subject: ${institution}. Here is my message: ${message}.`;
+    try {
+        // Step 1: Send Internal Email
+        const internalResult = await transporter.sendMail(internalMailOptions);
+        console.log("Internal email sent successfully:", internalResult.response);
 
-            try {
-                await sendTwilioMessage('+919787867648', messageBody); // replace with the recipient's phone number
-                res.status(200).send("Email and WhatsApp message sent successfully");
-            } catch (error) {
-                console.error("Error sending WhatsApp message:", error);
-                res.status(500).send("Error sending email and WhatsApp message");
-            }
-        }
-    });
+        // Step 2: Send Welcome Email ONLY if Step 1 is successful
+        const welcomeResult = await welcomeTransporter.sendMail(welcomeMailOptions);
+        console.log("Welcome email sent successfully:", welcomeResult.response);
+
+        // Send response back to the user
+        res.status(200).send("Internal email and Welcome email sent successfully!");
+    } catch (err) {
+        console.error("Error during email sending:", err);
+        res.status(500).send("Error sending emails");
+    }
 });
 
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

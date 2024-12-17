@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +21,7 @@
         }
 
         body {
-            font-family: 'Ubuntu', sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
@@ -69,7 +70,6 @@
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 5px;
-            margin-top: 15px;
         }
 
         .cta-btn:hover {
@@ -99,8 +99,44 @@
         .footer a:hover {
             color: var(--footer-link-hover);
         }
+
+        /* Image container styles */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .image-box {
+            width: 270px;
+            height: 270px;
+            display: flex;
+            border-radius: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            border-radius: 7px;
+            height: auto;
+        }
+
+        /* Responsive media query for small screens */
+        @media (max-width: 600px) {
+            .image-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .image-box {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header Section -->
@@ -113,7 +149,8 @@
         <div class="content">
             <p>Dear <strong>FULLNAME</strong>,</p>
 
-            <p>Thank you for sharing your thoughts with <strong>Edvatiq</strong>. We’ve received your message, and our team will review it carefully. One of our team members will get back to you as soon as possible.</p>
+            <p>Thank you for sharing your thoughts with <strong>Edvatiq</strong>. We’ve received your message, and our
+                team will review it carefully. One of our team members will get back to you as soon as possible.</p>
 
             <p>Explore the exciting courses we offer at Edvatiq:</p>
             <ul>
@@ -126,7 +163,23 @@
             </ul>
 
             <p>Start your journey with us today!</p>
-            <a href="https://your-website-link.com/signup" class="cta-btn">Sign Up & Explore Courses</a>
+
+            <!-- Image Container -->
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="https://edvatiq.netlify.app/assets/images/home/training.webp" alt="img1">
+                </div>
+                <div class="image-box">
+                    <img src="https://edvatiq.netlify.app/assets/images/home/online.jpg" alt="img2">
+                </div>
+            </div>
+
+            <!-- Button -->
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="https://edvatiq.netlify.app" class="cta-btn">
+                    Sign Up & Explore Courses
+                </a>
+            </div>
 
             <hr class="divider">
 
@@ -144,4 +197,5 @@
         </div>
     </div>
 </body>
+
 </html>

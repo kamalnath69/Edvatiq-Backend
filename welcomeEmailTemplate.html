@@ -14,7 +14,7 @@
             --btn-color: #2c3e50;
             --btn-bg: #f5d451;
             --btn-hover-bg: #f1c40f;
-            --header-bg: #ecf0f1;
+            --header-bg: red;
             --hr-color: #ecf0f1;
             --footer-link: #7f8c8d;
             --footer-link-hover: #f5d451;
@@ -63,19 +63,6 @@
             margin: 10px 0;
         }
 
-        .cta-btn {
-            display: inline-block;
-            background-color: var(--btn-bg);
-            color: var(--btn-color);
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-
-        .cta-btn:hover {
-            background-color: var(--btn-hover-bg);
-        }
-
         .divider {
             border: none;
             border-top: 1px solid var(--hr-color);
@@ -109,8 +96,8 @@
         }
 
         .image-box {
-            width: 270px;
-            height: 270px;
+            width: 220px;
+            height: 220px;
             display: flex;
             border-radius: 10px;
             justify-content: center;
@@ -121,6 +108,31 @@
             max-width: 100%;
             border-radius: 7px;
             height: auto;
+        }
+
+        /* Button Container */
+        .cta-btn-container {
+            background-color: var(--btn-bg); /* Set background color to the div */
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .cta-btn {
+            color: var(--btn-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            display: inline-block;
+            border-radius: 5px;
+            font-weight: 500;
+            text-align: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: var(--btn-hover-bg);
+            color: #fff; /* Change text color to white on hover */
         }
 
         /* Responsive media query for small screens */
@@ -176,9 +188,11 @@
 
             <!-- Button -->
             <div style="text-align: center; margin-top: 20px;">
-                <a href="https://edvatiq.netlify.app" class="cta-btn">
-                    Sign Up & Explore Courses
-                </a>
+                <div class="cta-btn-container">
+                    <a href="https://edvatiq.netlify.app" class="cta-btn">
+                        Sign Up & Explore Courses
+                    </a>
+                </div>
             </div>
 
             <hr class="divider">

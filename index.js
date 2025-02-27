@@ -33,7 +33,6 @@ const welcomeTransporter = nodemailer.createTransport({
     },
 });
 
-// Endpoint to handle emails
 app.post("/send-email", async (req, res) => {
     const { fullname, phone, email, institution, message } = req.body;
 
